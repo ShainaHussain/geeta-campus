@@ -10,7 +10,6 @@
     body{background:#0a0f1a;font-family:'Inter',sans-serif;overflow:hidden;color:#e0e8f0}
     #canvas-container{width:100vw;height:100vh;position:relative}
     canvas{display:block}
-
     /* ── TOP BAR ── */
     #topbar{
       position:absolute;top:0;left:0;right:0;height:52px;
@@ -37,7 +36,6 @@
     .sri{padding:9px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.15s}
     .sri:hover{background:rgba(255,200,60,0.1)}
     .sri .bt{font-size:10px;color:#ffc83c;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
-
     /* ── MODE TOGGLE ── */
     #mode-btn{
       padding:7px 14px;border-radius:8px;border:1px solid rgba(255,200,60,0.4);
@@ -46,7 +44,6 @@
     }
     #mode-btn:hover{background:rgba(255,200,60,0.2)}
     #mode-btn.walk-active{background:rgba(255,200,60,0.25);border-color:#ffc83c}
-
     /* ── INFO PANEL ── */
     #info-panel{
       position:absolute;top:62px;right:16px;width:290px;
@@ -77,7 +74,6 @@
     .tag-admin{background:rgba(255,200,60,0.15);color:#ffc83c;border:1px solid rgba(255,200,60,0.25)}
     .tag-sports{background:rgba(60,200,130,0.15);color:#5de0a0;border:1px solid rgba(60,200,130,0.25)}
     .tag-coming{background:rgba(150,150,150,0.12);color:#aaa;border:1px solid rgba(150,150,150,0.2)}
-
     /* Enter building button */
     #enter-btn{
       display:none;width:100%;margin-top:12px;padding:9px;
@@ -87,7 +83,6 @@
       transition:all 0.2s;text-align:center
     }
     #enter-btn:hover{background:linear-gradient(135deg,rgba(99,102,241,0.5),rgba(139,92,246,0.5));color:#fff}
-
     /* ── INTERIOR VIEW ── */
     #interior-panel{
       position:absolute;inset:0;z-index:200;
@@ -135,7 +130,6 @@
     .room-card:hover{background:rgba(255,200,60,0.08);border-color:rgba(255,200,60,0.2)}
     .room-card .rn{font-size:11px;font-weight:600;color:#ffc83c;margin-bottom:4px}
     .room-card .rd{font-size:11px;color:rgba(224,232,240,0.6);line-height:1.4}
-
     /* ── WALK MODE CONTROLS ── */
     #walk-controls{
       position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
@@ -156,7 +150,6 @@
       padding:10px 14px;font-size:11px;color:rgba(224,232,240,0.5);line-height:1.8
     }
     #walk-hint strong{color:rgba(224,232,240,0.8)}
-
     /* ── CROSSHAIR (walk mode) ── */
     #crosshair{
       position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
@@ -167,7 +160,6 @@
     }
     #crosshair::before{width:2px;height:100%;top:0;left:50%;transform:translateX(-50%)}
     #crosshair::after{width:100%;height:2px;top:50%;left:0;transform:translateY(-50%)}
-
     /* ── LEGEND ── */
     #legend{
       position:absolute;bottom:20px;left:16px;z-index:100;
@@ -177,7 +169,6 @@
     #legend h4{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;color:#ffc83c;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
     .li{display:flex;align-items:center;gap:7px;margin-bottom:5px;font-size:11px;color:rgba(224,232,240,0.75)}
     .ld{width:10px;height:10px;border-radius:2px;flex-shrink:0}
-
     /* ── LOADING ── */
     #loading{
       position:absolute;inset:0;background:#0a0f1a;
@@ -190,6 +181,7 @@
     .lf{height:100%;background:#ffc83c;border-radius:2px;animation:ld 1.3s ease forwards}
     @keyframes ld{from{width:0}to{width:100%}}
   </style>
+  <script type="module" crossorigin src="/geeta-campus/assets/index-CAGOizRH.js"></script>
 </head>
 <body>
 <div id="loading">
@@ -279,7 +271,6 @@
     <strong>ESC</strong> — Back to overview
   </div>
 </div>
-
-<script type="module" src="./main.js"></script>
+
 </body>
 </html>
