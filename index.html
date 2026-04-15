@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Geeta University — 3D Campus</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@300;400;500&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0f1a;font-family:'Inter',sans-serif;overflow:hidden;color:#e0e8f0}
+    #canvas-container{width:100vw;height:100vh;position:relative}
+    canvas{display:block}
+
+    /* ── TOP BAR ── */
+    #topbar{
+      position:absolute;top:0;left:0;right:0;height:52px;
+      background:rgba(8,14,28,0.92);backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(255,200,60,0.2);
+      display:flex;align-items:center;padding:0 16px;gap:12px;z-index:100
+    }
+    .logo{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:#ffc83c;letter-spacing:1px;white-space:nowrap}
+    .logo span{color:#e0e8f0;font-weight:400}
+    #search-box{flex:1;max-width:340px;position:relative}
+    #search-input{
+      width:100%;padding:7px 14px 7px 32px;
+      background:rgba(255,255,255,0.07);border:1px solid rgba(255,200,60,0.25);
+      border-radius:8px;color:#e0e8f0;font-size:13px;outline:none;transition:border-color 0.2s
+    }
+    #search-input:focus{border-color:rgba(255,200,60,0.6)}
+    #search-input::placeholder{color:rgba(224,232,240,0.4)}
+    .s-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;opacity:0.5}
+    #search-results{
+      position:absolute;top:calc(100% + 5px);left:0;right:0;
+      background:rgba(10,15,26,0.97);border:1px solid rgba(255,200,60,0.2);
+      border-radius:8px;overflow:hidden;display:none;z-index:200
+    }
+    .sri{padding:9px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.15s}
+    .sri:hover{background:rgba(255,200,60,0.1)}
+    .sri .bt{font-size:10px;color:#ffc83c;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+
+    /* ── MODE TOGGLE ── */
+    #mode-btn{
+      padding:7px 14px;border-radius:8px;border:1px solid rgba(255,200,60,0.4);
+      background:rgba(255,200,60,0.1);color:#ffc83c;font-size:12px;font-weight:600;
+      cursor:pointer;white-space:nowrap;transition:all 0.2s;letter-spacing:0.5px
+    }
+    #mode-btn:hover{background:rgba(255,200,60,0.2)}
+    #mode-btn.walk-active{background:rgba(255,200,60,0.25);border-color:#ffc83c}
+
+    /* ── INFO PANEL ── */
+    #info-panel{
+      position:absolute;top:62px;right:16px;width:290px;
+      background:rgba(8,14,28,0.95);backdrop-filter:blur(16px);
+      border:1px solid rgba(255,200,60,0.3);border-radius:14px;
+      padding:18px;z-index:100;display:none;
+      animation:slideIn 0.25s ease;
+      max-height:calc(100vh - 80px);overflow-y:auto
+    }
+    @keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+    .ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+    .bl{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#ffc83c;margin-bottom:3px}
+    .bn{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#fff;line-height:1.1}
+    #panel-close{
+      background:rgba(255,255,255,0.07);border:none;color:rgba(255,255,255,0.5);
+      width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:14px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0
+    }
+    #panel-close:hover{background:rgba(255,255,255,0.15);color:#fff}
+    .pdiv{height:1px;background:rgba(255,255,255,0.08);margin:8px 0}
+    .fi{margin-bottom:8px}
+    .fl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#ffc83c;margin-bottom:2px}
+    .fd{font-size:12px;color:rgba(224,232,240,0.75);line-height:1.5}
+    .tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+    .tag{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:500}
+    .tag-academic{background:rgba(60,130,255,0.18);color:#7ab4ff;border:1px solid rgba(60,130,255,0.3)}
+    .tag-hostel{background:rgba(255,100,100,0.15);color:#ff9090;border:1px solid rgba(255,100,100,0.25)}
+    .tag-admin{background:rgba(255,200,60,0.15);color:#ffc83c;border:1px solid rgba(255,200,60,0.25)}
+    .tag-sports{background:rgba(60,200,130,0.15);color:#5de0a0;border:1px solid rgba(60,200,130,0.25)}
+    .tag-coming{background:rgba(150,150,150,0.12);color:#aaa;border:1px solid rgba(150,150,150,0.2)}
+
+    /* Enter building button */
+    #enter-btn{
+      display:none;width:100%;margin-top:12px;padding:9px;
+      background:linear-gradient(135deg,rgba(99,102,241,0.3),rgba(139,92,246,0.3));
+      border:1px solid rgba(99,102,241,0.5);border-radius:8px;
+      color:#a5b4fc;font-size:13px;font-weight:600;cursor:pointer;
+      transition:all 0.2s;text-align:center
+    }
+    #enter-btn:hover{background:linear-gradient(135deg,rgba(99,102,241,0.5),rgba(139,92,246,0.5));color:#fff}
+
+    /* ── INTERIOR VIEW ── */
+    #interior-panel{
+      position:absolute;inset:0;z-index:200;
+      background:rgba(5,8,18,0.97);backdrop-filter:blur(20px);
+      display:none;flex-direction:column
+    }
+    #interior-header{
+      padding:14px 20px;border-bottom:1px solid rgba(255,200,60,0.15);
+      display:flex;align-items:center;gap:12px;background:rgba(8,14,28,0.9)
+    }
+    #back-btn{
+      padding:6px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);
+      background:rgba(255,255,255,0.07);color:#e0e8f0;font-size:12px;cursor:pointer
+    }
+    #back-btn:hover{background:rgba(255,255,255,0.12)}
+    #interior-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#ffc83c}
+    #interior-body{flex:1;display:flex;overflow:hidden}
+    #floor-nav{
+      width:160px;flex-shrink:0;padding:16px 12px;
+      border-right:1px solid rgba(255,255,255,0.07);
+      display:flex;flex-direction:column;gap:6px;overflow-y:auto
+    }
+    .floor-btn{
+      padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);
+      background:transparent;color:rgba(224,232,240,0.6);font-size:12px;
+      cursor:pointer;text-align:left;transition:all 0.15s
+    }
+    .floor-btn:hover{background:rgba(255,200,60,0.08);color:#e0e8f0}
+    .floor-btn.active{background:rgba(255,200,60,0.15);border-color:rgba(255,200,60,0.4);color:#ffc83c;font-weight:600}
+    #floor-view{flex:1;padding:24px;overflow-y:auto}
+    #floor-canvas-wrap{
+      width:100%;max-width:600px;margin:0 auto;
+      background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+      border-radius:12px;padding:20px;margin-bottom:20px
+    }
+    #floor-canvas{width:100%;border-radius:8px;display:block}
+    #floor-info-box{max-width:600px;margin:0 auto}
+    #floor-info-box h3{font-family:'Rajdhani',sans-serif;font-size:18px;color:#ffc83c;margin-bottom:8px}
+    #floor-info-box p{font-size:13px;color:rgba(224,232,240,0.7);line-height:1.7}
+    .room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:14px}
+    .room-card{
+      padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.04);cursor:pointer;transition:all 0.15s
+    }
+    .room-card:hover{background:rgba(255,200,60,0.08);border-color:rgba(255,200,60,0.2)}
+    .room-card .rn{font-size:11px;font-weight:600;color:#ffc83c;margin-bottom:4px}
+    .room-card .rd{font-size:11px;color:rgba(224,232,240,0.6);line-height:1.4}
+
+    /* ── WALK MODE CONTROLS ── */
+    #walk-controls{
+      position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+      z-index:100;display:none;flex-direction:column;align-items:center;gap:6px
+    }
+    .ctrl-row{display:flex;gap:6px}
+    .ctrl-btn{
+      width:44px;height:44px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);
+      background:rgba(8,14,28,0.85);color:#e0e8f0;font-size:18px;
+      cursor:pointer;display:flex;align-items:center;justify-content:center;
+      transition:all 0.1s;user-select:none;backdrop-filter:blur(8px)
+    }
+    .ctrl-btn:active,.ctrl-btn.pressed{background:rgba(255,200,60,0.2);border-color:#ffc83c;color:#ffc83c}
+    #walk-hint{
+      position:absolute;bottom:20px;right:16px;z-index:100;display:none;
+      background:rgba(8,14,28,0.85);backdrop-filter:blur(8px);
+      border:1px solid rgba(255,255,255,0.1);border-radius:10px;
+      padding:10px 14px;font-size:11px;color:rgba(224,232,240,0.5);line-height:1.8
+    }
+    #walk-hint strong{color:rgba(224,232,240,0.8)}
+
+    /* ── CROSSHAIR (walk mode) ── */
+    #crosshair{
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:20px;height:20px;z-index:50;display:none;pointer-events:none
+    }
+    #crosshair::before,#crosshair::after{
+      content:'';position:absolute;background:rgba(255,255,255,0.7);border-radius:2px
+    }
+    #crosshair::before{width:2px;height:100%;top:0;left:50%;transform:translateX(-50%)}
+    #crosshair::after{width:100%;height:2px;top:50%;left:0;transform:translateY(-50%)}
+
+    /* ── LEGEND ── */
+    #legend{
+      position:absolute;bottom:20px;left:16px;z-index:100;
+      background:rgba(8,14,28,0.88);backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px
+    }
+    #legend h4{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;color:#ffc83c;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+    .li{display:flex;align-items:center;gap:7px;margin-bottom:5px;font-size:11px;color:rgba(224,232,240,0.75)}
+    .ld{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+    /* ── LOADING ── */
+    #loading{
+      position:absolute;inset:0;background:#0a0f1a;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      z-index:999;gap:14px
+    }
+    .gl{font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;color:#ffc83c;letter-spacing:2px}
+    .gs{font-size:12px;color:rgba(224,232,240,0.4);letter-spacing:1px}
+    .lb{width:180px;height:2px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;margin-top:6px}
+    .lf{height:100%;background:#ffc83c;border-radius:2px;animation:ld 1.3s ease forwards}
+    @keyframes ld{from{width:0}to{width:100%}}
+  </style>
+</head>
+<body>
+<div id="loading">
+  <div class="gl">GEETA UNIVERSITY</div>
+  <div class="gs">Loading 3D Campus Map...</div>
+  <div class="lb"><div class="lf"></div></div>
+</div>
+
+<div id="canvas-container">
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <div class="logo">GEETA <span>UNIVERSITY</span></div>
+    <div id="search-box">
+      <span class="s-icon">🔍</span>
+      <input id="search-input" type="text" placeholder="Search blocks, OAT, CSE, mess, labs..."/>
+      <div id="search-results"></div>
+    </div>
+    <button id="mode-btn">🚶 Walk Mode</button>
+  </div>
+
+  <!-- CROSSHAIR -->
+  <div id="crosshair"></div>
+
+  <!-- INFO PANEL -->
+  <div id="info-panel">
+    <div class="ph">
+      <div>
+        <div class="bl" id="panel-label"></div>
+        <div class="bn" id="panel-name"></div>
+      </div>
+      <button id="panel-close">✕</button>
+    </div>
+    <div class="pdiv"></div>
+    <div id="panel-floors"></div>
+    <div class="tag-row" id="panel-tags"></div>
+    <button id="enter-btn">🏢 Enter Building →</button>
+  </div>
+
+  <!-- INTERIOR PANEL -->
+  <div id="interior-panel">
+    <div id="interior-header">
+      <button id="back-btn">← Back to Campus</button>
+      <div id="interior-title">Building Interior</div>
+    </div>
+    <div id="interior-body">
+      <div id="floor-nav"></div>
+      <div id="floor-view">
+        <div id="floor-canvas-wrap">
+          <canvas id="floor-canvas" width="560" height="320"></canvas>
+        </div>
+        <div id="floor-info-box">
+          <h3 id="fib-title"></h3>
+          <p id="fib-desc"></p>
+          <div class="room-grid" id="room-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGEND (orbit mode only) -->
+  <div id="legend">
+    <h4>Legend</h4>
+    <div class="li"><div class="ld" style="background:#f59e0b"></div>Admin / Gateway</div>
+    <div class="li"><div class="ld" style="background:#2563eb"></div>Academic Blocks</div>
+    <div class="li"><div class="ld" style="background:#6366f1"></div>Hostel</div>
+    <div class="li"><div class="ld" style="background:#f97316"></div>Mess / Cafeteria</div>
+    <div class="li"><div class="ld" style="background:#4a7a5a"></div>Sports / OAT</div>
+  </div>
+
+  <!-- WALK CONTROLS (mobile + desktop) -->
+  <div id="walk-controls">
+    <div class="ctrl-row">
+      <div class="ctrl-btn" id="btn-up" data-key="w">↑</div>
+    </div>
+    <div class="ctrl-row">
+      <div class="ctrl-btn" id="btn-left" data-key="a">←</div>
+      <div class="ctrl-btn" id="btn-down" data-key="s">↓</div>
+      <div class="ctrl-btn" id="btn-right" data-key="d">→</div>
+    </div>
+  </div>
+
+  <!-- WALK HINT -->
+  <div id="walk-hint">
+    <strong>W A S D</strong> — Move<br>
+    <strong>Mouse drag</strong> — Look around<br>
+    <strong>Click building</strong> — Enter<br>
+    <strong>ESC</strong> — Back to overview
+  </div>
+</div>
+
+<script type="module" src="./main.js"></script>
+</body>
+</html>
